@@ -256,37 +256,6 @@ module.exports = (_ => {
                         }
                     }
                 }
-                return;
-
-                // loop through all channels 
-                for (let i = 0; i < channels.length; i++) {
-                    let c = channels[i];
-                    // get the channel id
-                    let channelId = getChannelId(c);
-                    // get the user ids of all users in the channel
-                    let userIds = findChannelUserIds(c);
-                    // iterate through all user ids
-                    for (let j = 0; j < userIds.length; j++) {
-                        let userId = userIds[j];
-                        // if the user is not in the users object, add them
-                        if (!this.users[userId]) {
-                            // console.log("CREATED!", userId)
-                            let data = {
-                                updates: 0,
-                                actual_start_time: Date.now(),
-                                channel: channelId,
-                            };
-                            this.users[userId] = data;
-                        } else if (this.users[userId]["channel"] !== channelId) {
-                            // console.log("CHANGED CHANNEL!", userId)
-                            this.users[userId]["actual_start_time"] = Date.now();
-                            this.users[userId]["updates"] = 0;
-                            this.users[userId]["channel"] = channelId;
-                        } else {
-                            this.users[userId]["updates"] += 1;
-                        }
-                    }
-                }
             }
 
             createUserTimer(e) {
