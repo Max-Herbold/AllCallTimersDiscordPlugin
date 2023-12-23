@@ -10,6 +10,7 @@
  * @website
  * @source
  * @updateUrl
+ * @authorLink https://github.com/Max-Herbold
  */
 
 module.exports = (_ => {
@@ -61,7 +62,6 @@ module.exports = (_ => {
             return template.content.firstElementChild;
         }
     } : (([Plugin, BDFDB]) => {
-
 
         findAllVoiceChannels = () => {
             // wait for the voice channels to render
@@ -116,6 +116,16 @@ module.exports = (_ => {
                 userIds.push(findUserId(u));
             }
             return userIds;
+        }
+
+        getChannelByChannelId = (channelId) => {
+            let channels = findAllVoiceChannels();
+            for (let i = 0; i < channels.length; i++) {
+                let c = channels[i];
+                if (getChannelId(c) === channelId) {
+                    return c;
+                }
+            }
         }
 
         /**
@@ -236,11 +246,50 @@ module.exports = (_ => {
                             this.users[userId]["updates"] += 1;
                         }
                     }
+
+                    for (let user in this.users) {
+                        // user is all id's
+                        if (this.users[user]["channel"] === channelId) {
+                            if (!userIds.includes(user)) {
+                                delete this.users[user];
+                            }
+                        }
+                    }
+                }
+                return;
+
+                // loop through all channels 
+                for (let i = 0; i < channels.length; i++) {
+                    let c = channels[i];
+                    // get the channel id
+                    let channelId = getChannelId(c);
+                    // get the user ids of all users in the channel
+                    let userIds = findChannelUserIds(c);
+                    // iterate through all user ids
+                    for (let j = 0; j < userIds.length; j++) {
+                        let userId = userIds[j];
+                        // if the user is not in the users object, add them
+                        if (!this.users[userId]) {
+                            // console.log("CREATED!", userId)
+                            let data = {
+                                updates: 0,
+                                actual_start_time: Date.now(),
+                                channel: channelId,
+                            };
+                            this.users[userId] = data;
+                        } else if (this.users[userId]["channel"] !== channelId) {
+                            // console.log("CHANGED CHANNEL!", userId)
+                            this.users[userId]["actual_start_time"] = Date.now();
+                            this.users[userId]["updates"] = 0;
+                            this.users[userId]["channel"] = channelId;
+                        } else {
+                            this.users[userId]["updates"] += 1;
+                        }
+                    }
                 }
             }
 
-            _processUser(e) {
-                this.processAllUsers(e);
+            createUserTimer(e) {
                 let user = e.instance.props.user;
                 let id = user.id;
 
@@ -256,6 +305,11 @@ module.exports = (_ => {
                     time: time
                 });
                 children.splice(insertIndex, 0, tag);
+            }
+
+            _processUser(e) {
+                this.processAllUsers(e);
+                this.createUserTimer(e);
             }
 
             processVoiceUser(e) {
