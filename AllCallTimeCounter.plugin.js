@@ -137,7 +137,7 @@ module.exports = (_ => {
                 const ChannelListVoiceCategoryStore = window.BdApi.Webpack.getStore("VoiceStateStore");
                 let states = ChannelListVoiceCategoryStore.getAllVoiceStates();
 
-                let current_users = this.all_users(states);
+                let current_users = this.allUsers(states);
                 for (let userId in this.users) {
                     if (!current_users.includes(userId)) {
                         delete this.users[userId];
