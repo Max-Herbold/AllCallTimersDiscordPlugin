@@ -53,7 +53,10 @@ module.exports = (_ => {
             }
             if (!window.BDFDB_Global.pluginQueue.includes(this.name)) window.BDFDB_Global.pluginQueue.push(this.name);
         }
-        start() { this.load(); }
+        start() {
+            console.log("ALLCALL: first start");
+            this.load();
+        }
         stop() { }
         getSettingsPanel() {
             let template = document.createElement("template");
@@ -63,93 +66,15 @@ module.exports = (_ => {
         }
     } : (([Plugin, BDFDB]) => {
 
-        findAllVoiceChannels = () => {
-            // wait for the voice channels to render
-            const voices = document.getElementsByClassName("containerDefault__3187b")
-
-            // convert the HTMLCollection to some iterable
-            let voiceArray = [];
-
-            for (let i = 0; i < voices.length; i++) {
-                let v = voices.item(i);
-                // childs (div) child (div) has class `typeVoice_f4ba92`
-                if (v.children[0].children[0].classList.contains("typeVoice_f4ba92")) {
-                    voiceArray.push(voices.item(i));
-                }
-            }
-
-            return voiceArray;
-        }
-
-        getChannelId = (channel) => {
-            // get the `a` element with `data-list-item-id` attribute
-            let a = channel.querySelector(`a[data-list-item-id]`);
-
-            // get the `data-list-item-id` attribute
-            let dataListItemId = a.getAttribute("data-list-item-id");
-
-            return dataListItemId.split("___").pop();
-        }
-
-        findUserId = (user) => {
-            let avatar = user.querySelector(`div[class^="userAvatar"]`);
-            let avatarUrl = avatar.style.backgroundImage;
-            let userId = avatarUrl.split("/");
-
-            // return the second to last element
-            let expectedUserId = userId[userId.length - 2];
-            if (expectedUserId === "avatars") {
-                return userId[userId.length - 3];
-            }
-            return expectedUserId;
-        }
-
-        findChannelUserIds = (channel) => {
-            let usersList = channel.querySelector(`div[class^="list"]`);
-            if (!usersList) {
-                return [];
-            }
-            let users = usersList.children;
-            let userIds = [];
-            for (let i = 0; i < users.length; i++) {
-                let u = users.item(i);
-                userIds.push(findUserId(u));
-            }
-            return userIds;
-        }
-
-        getChannelByChannelId = (channelId) => {
-            let channels = findAllVoiceChannels();
-            for (let i = 0; i < channels.length; i++) {
-                let c = channels[i];
-                if (getChannelId(c) === channelId) {
-                    return c;
-                }
-            }
-        }
-
-        /**
-         * The function `getUserChannelId` returns the channel ID of a voice channel that a user is
-         * currently in.
-         * @param userId - The `userId` parameter is the unique identifier of a user.
-         * @returns The channel ID of the voice channel that the user with the given user ID is
-         * currently in.
-         */
-        getUserChannelId = (userId) => {
-            let channels = findAllVoiceChannels();
-            for (let i = 0; i < channels.length; i++) {
-                let c = channels[i];
-                let userIds = findChannelUserIds(c);
-                if (userIds.includes(userId)) {
-                    return getChannelId(c);
-                }
-            }
-        }
 
         class Timer extends BDFDB.ReactUtils.Component {
             constructor(props) {
-                super(props);
-                this.state = { time_delta: Date.now() - this.props.time };
+                try {
+                    super(props);
+                    this.state = { time_delta: Date.now() - this.props.time };
+                } catch (e) {
+                    console.log(e);
+                }
             }
 
             render() {
@@ -185,8 +110,8 @@ module.exports = (_ => {
         }
 
         return class AllCallTimeCounter extends Plugin {
+            users = {};
             onLoad() {
-
                 this.modulePatches = {
                     before: [
                     ],
@@ -194,68 +119,76 @@ module.exports = (_ => {
                         "VoiceUser"
                     ]
                 };
-                console.log("load");
+            }
 
+            allUsers(guilds) {
+                // return an array of all users in all guilds
+                let users = [];
+                for (let guildId in guilds) {
+                    let guild = guilds[guildId];
+                    for (let userId in guild) {
+                        users.push(userId);
+                    }
+                }
+                return users;
+            }
+
+            runEverySecond() {
+                const ChannelListVoiceCategoryStore = window.BdApi.Webpack.getStore("VoiceStateStore");
+                let states = ChannelListVoiceCategoryStore.getAllVoiceStates();
+
+                let current_users = this.all_users(states);
+                for (let userId in this.users) {
+                    if (!current_users.includes(userId)) {
+                        delete this.users[userId];
+                    }
+                }
+
+                // states is an array of {guildId: {userId: {channelId: channelId}}}
+                // iterate through all guilds and update the users, check if the user is in the same channel as before
+                // if userId is not in any guild it should be deleted from the users object
+                for (let guildId in states) {
+                    let guild = states[guildId];
+                    for (let userId in guild) {
+                        let user = guild[userId];
+                        let channelId = user.channelId;
+                        if (channelId) {
+                            if (this.users[userId]) {
+                                // user is already in the users object
+                                if (this.users[userId]["channelId"] !== channelId) {
+                                    // user changed the channel
+                                    this.users[userId]["channelId"] = channelId;
+                                    this.users[userId]["actual_start_time"] = Date.now();
+                                }
+                            } else {
+                                // user is not in the users object
+                                this.users[userId] = {
+                                    "channelId": channelId,
+                                    "actual_start_time": Date.now()
+                                };
+                            }
+                        }
+                    }
+                }
             }
 
             onStart() {
-                console.log("start");
+                // run every second
+                // TODO: Hook this to user join/leave events
+                this.interval = setInterval(() => this.runEverySecond(), 1000);
+
                 this.forceUpdateAll();
             }
 
             onStop() {
+                clearInterval(this.interval);
+
                 this.forceUpdateAll();
             }
 
             forceUpdateAll() {
                 BDFDB.PatchUtils.forceAllUpdates(this);
                 BDFDB.MessageUtils.rerenderAll();
-            }
-
-            users = {};
-
-            processAllUsers(e) {
-                // get all voice channels
-                let channels = findAllVoiceChannels();
-
-                // iterate through all voice channels
-                for (let i = 0; i < channels.length; i++) {
-                    let c = channels[i];
-                    // get the channel id
-                    let channelId = getChannelId(c);
-                    // get the user ids of all users in the channel
-                    let userIds = findChannelUserIds(c);
-                    // iterate through all user ids
-                    for (let j = 0; j < userIds.length; j++) {
-                        let userId = userIds[j];
-                        // if the user is not in the users object, add them
-                        if (!this.users[userId]) {
-                            // console.log("CREATED!", userId)
-                            let data = {
-                                updates: 0,
-                                actual_start_time: Date.now(),
-                                channel: channelId,
-                            };
-                            this.users[userId] = data;
-                        } else if (this.users[userId]["channel"] !== channelId) {
-                            // console.log("CHANGED CHANNEL!", userId)
-                            this.users[userId]["actual_start_time"] = Date.now();
-                            this.users[userId]["updates"] = 0;
-                            this.users[userId]["channel"] = channelId;
-                        } else {
-                            this.users[userId]["updates"] += 1;
-                        }
-                    }
-
-                    for (let user in this.users) {
-                        // user is all id's
-                        if (this.users[user]["channel"] === channelId) {
-                            if (!userIds.includes(user)) {
-                                delete this.users[user];
-                            }
-                        }
-                    }
-                }
             }
 
             createUserTimer(e) {
@@ -273,16 +206,12 @@ module.exports = (_ => {
                 tag = BDFDB.ReactUtils.createElement(Timer, {
                     time: time
                 });
+
                 children.splice(insertIndex, 0, tag);
             }
 
-            _processUser(e) {
-                this.processAllUsers(e);
-                this.createUserTimer(e);
-            }
-
             processVoiceUser(e) {
-                this._processUser(e);
+                this.createUserTimer(e);
             }
 
         };
