@@ -19,9 +19,7 @@ module.exports = (_ => {
             try {
                 super(props);
                 this.state = { time_delta: Date.now() - this.props.time };
-            } catch (e) {
-                console.log(e);
-            }
+            } catch (e) { }
         }
 
         render() {
@@ -87,7 +85,7 @@ module.exports = (_ => {
                 let guild = states[guildId];
                 for (let userId in guild) {
                     let user = guild[userId];
-                    let channelId = user.channelId;
+                    let {channelId} = user;
                     if (channelId) {
                         if (this.users[userId]) {
                             // user is already in the users object
@@ -112,41 +110,34 @@ module.exports = (_ => {
             const searchProps = ["renderPrioritySpeaker", "renderIcons", "renderAvatar"];
             const VoiceUser = window.BdApi.Webpack.getAllByPrototypeKeys(...searchProps)[0];
 
-            window.BdApi.Patcher.after("AllCallTimeCounter", VoiceUser.prototype, "render", (thisObject, _, returnValue) => this.processVoiceUser(thisObject, _, returnValue));
+            window.BdApi.Patcher.after("AllCallTimeCounter", VoiceUser.prototype, "render", (e, _, returnValue) => this.processVoiceUser(e, _, returnValue));
 
-            // run every second
             // TODO: Hook this to user join/leave events
             this.interval = setInterval(() => this.runEverySecond(), 1000);
         }
 
         stop() {
-            // unpatch all functions
             window.BdApi.Patcher.unpatchAll("AllCallTimeCounter");
             clearInterval(this.interval);
         }
 
-        createUserTimer(e, returnvalue) {
-            let user = e.props.user;
-            let id = user.id;
-
-            let children = returnvalue.props.children.props.children;
-            let insertIndex = 3;
+        createUserTimer(user, parent) {
             let time = null;
 
             try {
-                time = this.users[id]["actual_start_time"];
+                time = this.users[user.id]["actual_start_time"];
             } catch (e) {
                 return;
             }
-            let tag = window.BdApi.React.createElement(Timer, {
-                time: time
-            });
+            let tag = window.BdApi.React.createElement(Timer, { time: time });
 
-            children.splice(insertIndex, 0, tag);
+            parent.splice(3, 0, tag);
         }
 
-        processVoiceUser(thisObject, _, returnValue) {
-            this.createUserTimer(thisObject, returnValue);
+        processVoiceUser(e, _, returnValue) {
+            let {user} = e.props;
+            let parent = returnValue.props.children.props.children;
+            this.createUserTimer(user, parent);
         }
     };
 })();
