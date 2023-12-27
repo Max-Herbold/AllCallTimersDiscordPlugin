@@ -8,7 +8,7 @@
  * @donate
  * @patreon
  * @website
- * @source
+ * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl
  * @authorLink https://github.com/Max-Herbold
  */
