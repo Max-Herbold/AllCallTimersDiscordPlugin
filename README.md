@@ -9,4 +9,3 @@ Simply drop this into the `AllCallTimeCounter.plugin.js` into the `plugins` fold
 
 ### Todo
 - Hook to user join/leave events
-- Users without a profile picture are not handled
