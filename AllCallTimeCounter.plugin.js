@@ -14,10 +14,6 @@
  */
 
 module.exports = (_ => {
-    const changeLog = {
-
-    };
-
     class Timer extends window.BdApi.React.Component {
         constructor(props) {
             try {
@@ -127,24 +123,6 @@ module.exports = (_ => {
             // unpatch all functions
             window.BdApi.Patcher.unpatchAll("AllCallTimeCounter");
             clearInterval(this.interval);
-        }
-
-        findChild(root, props) {
-            let children = root.props.children;
-            let found = null;
-            for (let i = 0; i < children.length; i++) {
-                let child = children[i];
-                if (child.props) {
-                    let found = this.findChild(child, props);
-                    if (found) {
-                        return found;
-                    }
-                }
-                if (props(child, root)) {
-                    return child;
-                }
-            }
-            return found;
         }
 
         createUserTimer(e, returnvalue) {
