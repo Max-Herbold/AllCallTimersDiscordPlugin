@@ -116,13 +116,6 @@ module.exports = (_ => {
             const searchProps = ["renderPrioritySpeaker", "renderIcons", "renderAvatar"];
             const VoiceUser = window.BdApi.Webpack.getAllByPrototypeKeys(...searchProps)[0];
 
-            // grab VoiceUser component WebpackModules.getByPrototypes("renderName", "renderAvatar")
-            // const VoiceUser = window.BdApi.Webpack.getAllByPrototypeKeys("renderName", "renderAvatar")[0];
-            // grab the original render function
-            // const OriginalRender = VoiceUser.prototype.render;
-            // create a new render function
-            console.log(VoiceUser.prototype);
-            console.log(VoiceUser);
             window.BdApi.Patcher.after("AllCallTimeCounter", VoiceUser.prototype, "render", (thisObject, _, returnValue) => this.processVoiceUser(thisObject, _, returnValue));
 
             // run every second
@@ -131,9 +124,6 @@ module.exports = (_ => {
         }
 
         stop() {
-            // remove all timers
-            let timers = document.getElementsByClassName("counter_number");
-
             // unpatch all functions
             window.BdApi.Patcher.unpatchAll("AllCallTimeCounter");
             clearInterval(this.interval);
@@ -178,7 +168,6 @@ module.exports = (_ => {
         }
 
         processVoiceUser(thisObject, _, returnValue) {
-            console.log("update");
             this.createUserTimer(thisObject, returnValue);
         }
     };
