@@ -18,202 +18,168 @@ module.exports = (_ => {
 
     };
 
-    return !window.BDFDB_Global || (!window.BDFDB_Global.loaded && !window.BDFDB_Global.started) ? class {
-        constructor(meta) { for (let key in meta) this[key] = meta[key]; }
-        getName() { return this.name; }
-        getAuthor() { return this.author; }
-        getVersion() { return this.version; }
-        getDescription() { return `The Library Plugin needed for ${this.name} is missing. Open the Plugin Settings to download it. \n\n${this.description}`; }
+    class Timer extends window.BdApi.React.Component {
+        constructor(props) {
+            try {
+                super(props);
+                this.state = { time_delta: Date.now() - this.props.time };
+            } catch (e) {
+                console.log(e);
+            }
+        }
 
-        downloadLibrary() {
-            BdApi.Net.fetch("https://mwittrien.github.io/BetterDiscordAddons/Library/0BDFDB.plugin.js").then(r => {
-                if (!r || r.status != 200) throw new Error();
-                else return r.text();
-            }).then(b => {
-                if (!b) throw new Error();
-                else return require("fs").writeFile(require("path").join(BdApi.Plugins.folder, "0BDFDB.plugin.js"), b, _ => BdApi.showToast("Finished downloading BDFDB Library", { type: "success" }));
-            }).catch(error => {
-                BdApi.alert("Error", "Could not download BDFDB Library Plugin. Try again later or download it manually from GitHub: https://mwittrien.github.io/downloader/?library");
+        render() {
+            let time = new Date(Date.now() - this.props.time).toISOString().substr(11, 8);
+            return window.BdApi.React.createElement("div", {
+                className: "counter_number",
+                children: time,
+                style: {
+                    color: "red",
+                    fontSize: "13px",
+                    fontWeight: "bold",
+                    position: "absolute",
+                    left: "90px",
+                    // backgroundColor: "white",
+                    borderRadius: "5px",
+                    padding: "2px",
+                    margin: "2px",
+                    // border: "1px solid black"
+                }
             });
         }
 
-        load() {
-            if (!window.BDFDB_Global || !Array.isArray(window.BDFDB_Global.pluginQueue)) window.BDFDB_Global = Object.assign({}, window.BDFDB_Global, { pluginQueue: [] });
-            if (!window.BDFDB_Global.downloadModal) {
-                window.BDFDB_Global.downloadModal = true;
-                BdApi.showConfirmationModal("Library Missing", `The Library Plugin needed for ${this.name} is missing. Please click "Download Now" to install it.`, {
-                    confirmText: "Download Now",
-                    cancelText: "Cancel",
-                    onCancel: _ => { delete window.BDFDB_Global.downloadModal; },
-                    onConfirm: _ => {
-                        delete window.BDFDB_Global.downloadModal;
-                        this.downloadLibrary();
-                    }
-                });
+        componentDidMount() {
+            this.interval = setInterval(() => this.setState({ time: Date.now() }), 1000);
+        }
+
+        componentWillUnmount() {
+            clearInterval(this.interval);
+        }
+    }
+
+    return class AllCallTimeCounter {
+        users = {};
+        load() { }
+
+        allUsers(guilds) {
+            // return an array of all users in all guilds
+            let users = [];
+            for (let guildId in guilds) {
+                let guild = guilds[guildId];
+                for (let userId in guild) {
+                    users.push(userId);
+                }
             }
-            if (!window.BDFDB_Global.pluginQueue.includes(this.name)) window.BDFDB_Global.pluginQueue.push(this.name);
+            return users;
         }
-        start() {
-            console.log("ALLCALL: first start");
-            this.load();
-        }
-        stop() { }
-        getSettingsPanel() {
-            let template = document.createElement("template");
-            template.innerHTML = `<div style="color: var(--header-primary); font-size: 16px; font-weight: 300; white-space: pre; line-height: 22px;">The Library Plugin needed for ${this.name} is missing.\nPlease click <a style="font-weight: 500;">Download Now</a> to install it.</div>`;
-            template.content.firstElementChild.querySelector("a").addEventListener("click", this.downloadLibrary);
-            return template.content.firstElementChild;
-        }
-    } : (([Plugin, BDFDB]) => {
 
+        runEverySecond() {
+            const ChannelListVoiceCategoryStore = window.BdApi.Webpack.getStore("VoiceStateStore");
+            let states = ChannelListVoiceCategoryStore.getAllVoiceStates();
 
-        class Timer extends BDFDB.ReactUtils.Component {
-            constructor(props) {
-                try {
-                    super(props);
-                    this.state = { time_delta: Date.now() - this.props.time };
-                } catch (e) {
-                    console.log(e);
+            let current_users = this.allUsers(states);
+            for (let userId in this.users) {
+                if (!current_users.includes(userId)) {
+                    delete this.users[userId];
                 }
             }
 
-            render() {
-                let time = new Date(Date.now() - this.props.time).toISOString().substr(11, 8);
-                return BDFDB.ReactUtils.createElement("div", {
-                    className: "counter_number",
-                    children: time,
-                    style: {
-                        color: "red",
-                        fontSize: "13px",
-                        fontWeight: "bold",
-                        position: "absolute",
-                        left: "90px",
-                        // backgroundColor: "white",
-                        borderRadius: "5px",
-                        padding: "2px",
-                        margin: "2px",
-                        // border: "1px solid black"
-                    }
-                });
-            }
-
-            // create a 1 second timer
-            componentDidMount() {
-                this.interval = setInterval(() => this.setState({ time: Date.now() }), 1000);
-            }
-
-            // remove the timer when we don't need it anymore
-            componentWillUnmount() {
-                // getUserChannelId(this.userId);
-                clearInterval(this.interval);
-            }
-        }
-
-        return class AllCallTimeCounter extends Plugin {
-            users = {};
-            onLoad() {
-                this.modulePatches = {
-                    before: [
-                    ],
-                    after: [
-                        "VoiceUser"
-                    ]
-                };
-            }
-
-            allUsers(guilds) {
-                // return an array of all users in all guilds
-                let users = [];
-                for (let guildId in guilds) {
-                    let guild = guilds[guildId];
-                    for (let userId in guild) {
-                        users.push(userId);
-                    }
-                }
-                return users;
-            }
-
-            runEverySecond() {
-                const ChannelListVoiceCategoryStore = window.BdApi.Webpack.getStore("VoiceStateStore");
-                let states = ChannelListVoiceCategoryStore.getAllVoiceStates();
-
-                let current_users = this.allUsers(states);
-                for (let userId in this.users) {
-                    if (!current_users.includes(userId)) {
-                        delete this.users[userId];
-                    }
-                }
-
-                // states is an array of {guildId: {userId: {channelId: channelId}}}
-                // iterate through all guilds and update the users, check if the user is in the same channel as before
-                // if userId is not in any guild it should be deleted from the users object
-                for (let guildId in states) {
-                    let guild = states[guildId];
-                    for (let userId in guild) {
-                        let user = guild[userId];
-                        let channelId = user.channelId;
-                        if (channelId) {
-                            if (this.users[userId]) {
-                                // user is already in the users object
-                                if (this.users[userId]["channelId"] !== channelId) {
-                                    // user changed the channel
-                                    this.users[userId]["channelId"] = channelId;
-                                    this.users[userId]["actual_start_time"] = Date.now();
-                                }
-                            } else {
-                                // user is not in the users object
-                                this.users[userId] = {
-                                    "channelId": channelId,
-                                    "actual_start_time": Date.now()
-                                };
+            // states is an array of {guildId: {userId: {channelId: channelId}}}
+            // iterate through all guilds and update the users, check if the user is in the same channel as before
+            // if userId is not in any guild it should be deleted from the users object
+            for (let guildId in states) {
+                let guild = states[guildId];
+                for (let userId in guild) {
+                    let user = guild[userId];
+                    let channelId = user.channelId;
+                    if (channelId) {
+                        if (this.users[userId]) {
+                            // user is already in the users object
+                            if (this.users[userId]["channelId"] !== channelId) {
+                                // user changed the channel
+                                this.users[userId]["channelId"] = channelId;
+                                this.users[userId]["actual_start_time"] = Date.now();
                             }
+                        } else {
+                            // user is not in the users object
+                            this.users[userId] = {
+                                "channelId": channelId,
+                                "actual_start_time": Date.now()
+                            };
                         }
                     }
                 }
             }
+        }
 
-            onStart() {
-                // run every second
-                // TODO: Hook this to user join/leave events
-                this.interval = setInterval(() => this.runEverySecond(), 1000);
+        start() {
+            const searchProps = ["renderPrioritySpeaker", "renderIcons", "renderAvatar"];
+            const VoiceUser = window.BdApi.Webpack.getAllByPrototypeKeys(...searchProps)[0];
 
-                this.forceUpdateAll();
+            // grab VoiceUser component WebpackModules.getByPrototypes("renderName", "renderAvatar")
+            // const VoiceUser = window.BdApi.Webpack.getAllByPrototypeKeys("renderName", "renderAvatar")[0];
+            // grab the original render function
+            // const OriginalRender = VoiceUser.prototype.render;
+            // create a new render function
+            console.log(VoiceUser.prototype);
+            console.log(VoiceUser);
+            window.BdApi.Patcher.after("AllCallTimeCounter", VoiceUser.prototype, "render", (thisObject, _, returnValue) => this.processVoiceUser(thisObject, _, returnValue));
+
+            // run every second
+            // TODO: Hook this to user join/leave events
+            this.interval = setInterval(() => this.runEverySecond(), 1000);
+        }
+
+        stop() {
+            // remove all timers
+            let timers = document.getElementsByClassName("counter_number");
+
+            // unpatch all functions
+            window.BdApi.Patcher.unpatchAll("AllCallTimeCounter");
+            clearInterval(this.interval);
+        }
+
+        findChild(root, props) {
+            let children = root.props.children;
+            let found = null;
+            for (let i = 0; i < children.length; i++) {
+                let child = children[i];
+                if (child.props) {
+                    let found = this.findChild(child, props);
+                    if (found) {
+                        return found;
+                    }
+                }
+                if (props(child, root)) {
+                    return child;
+                }
             }
+            return found;
+        }
 
-            onStop() {
-                clearInterval(this.interval);
+        createUserTimer(e, returnvalue) {
+            let user = e.props.user;
+            let id = user.id;
 
-                this.forceUpdateAll();
+            let children = returnvalue.props.children.props.children;
+            let insertIndex = 3;
+            let time = null;
+
+            try {
+                time = this.users[id]["actual_start_time"];
+            } catch (e) {
+                return;
             }
+            let tag = window.BdApi.React.createElement(Timer, {
+                time: time
+            });
 
-            forceUpdateAll() {
-                BDFDB.PatchUtils.forceAllUpdates(this);
-                BDFDB.MessageUtils.rerenderAll();
-            }
+            children.splice(insertIndex, 0, tag);
+        }
 
-            createUserTimer(e) {
-                let user = e.instance.props.user;
-                let id = user.id;
-
-                let content = BDFDB.ReactUtils.findChild(e.returnvalue, { props: [["className", BDFDB.disCN.voicecontent]] });
-                let children = content.props.children;
-                let insertIndex = 3;
-
-                let tag = null;
-
-                let time = this.users[id]["actual_start_time"];
-
-                tag = BDFDB.ReactUtils.createElement(Timer, {
-                    time: time
-                });
-
-                children.splice(insertIndex, 0, tag);
-            }
-
-            processVoiceUser(e) {
-                this.createUserTimer(e);
-            }
-
-        };
-    })(window.BDFDB_Global.PluginUtils.buildPlugin(changeLog));
+        processVoiceUser(thisObject, _, returnValue) {
+            console.log("update");
+            this.createUserTimer(thisObject, returnValue);
+        }
+    };
 })();
