@@ -25,18 +25,19 @@ module.exports = (_ => {
         render() {
             let time = new Date(Date.now() - this.props.time).toISOString().substr(11, 8);
             return window.BdApi.React.createElement("div", {
-                className: "counter_number",
+                className: "timeCounter —text-muted",
                 children: time,
                 style: {
                     color: "red",
-                    fontSize: "13px",
+                    fontSize: "12px",
                     fontWeight: "bold",
                     position: "absolute",
-                    left: "90px",
-                    // backgroundColor: "white",
+                    left: "120px",
+                    // backgroundColor: "#00000000",
                     borderRadius: "5px",
                     padding: "2px",
-                    margin: "2px",
+                    margin: "0px",
+                    bottom: "9px",
                     // border: "1px solid black"
                 }
             });
@@ -132,7 +133,8 @@ module.exports = (_ => {
             }
             let tag = window.BdApi.React.createElement(Timer, { time: time });
 
-            parent.splice(3, 0, tag);
+            let pos = parent.length - 1;
+            parent.splice(pos, 0, tag);
         }
 
         processVoiceUser(e, _, returnValue) {
