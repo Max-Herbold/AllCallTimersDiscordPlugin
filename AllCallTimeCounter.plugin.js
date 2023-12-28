@@ -68,7 +68,7 @@ module.exports = (_ => {
         }
 
         runEverySecond() {
-            let states = this.ChannelListVoiceCategoryStore.getAllVoiceStates();
+            let states = this.VoiceStateStore.getAllVoiceStates();
 
             let current_users = this.allUsers(states);
             for (let userId in this.users) {
@@ -109,7 +109,7 @@ module.exports = (_ => {
             const searchProps = ["renderPrioritySpeaker", "renderIcons", "renderAvatar"];
             const VoiceUser = window.BdApi.Webpack.getAllByPrototypeKeys(...searchProps)[0];
 
-            this.ChannelListVoiceCategoryStore = window.BdApi.Webpack.getStore("VoiceStateStore");
+            this.VoiceStateStore = window.BdApi.Webpack.getStore("VoiceStateStore");
 
             window.BdApi.Patcher.after("AllCallTimeCounter", VoiceUser.prototype, "render", (e, _, returnValue) => this.processVoiceUser(e, _, returnValue));
 
