@@ -68,8 +68,7 @@ module.exports = (_ => {
         }
 
         runEverySecond() {
-            const ChannelListVoiceCategoryStore = window.BdApi.Webpack.getStore("VoiceStateStore");
-            let states = ChannelListVoiceCategoryStore.getAllVoiceStates();
+            let states = this.ChannelListVoiceCategoryStore.getAllVoiceStates();
 
             let current_users = this.allUsers(states);
             for (let userId in this.users) {
@@ -85,7 +84,7 @@ module.exports = (_ => {
                 let guild = states[guildId];
                 for (let userId in guild) {
                     let user = guild[userId];
-                    let {channelId} = user;
+                    let { channelId } = user;
                     if (channelId) {
                         if (this.users[userId]) {
                             // user is already in the users object
@@ -109,6 +108,8 @@ module.exports = (_ => {
         start() {
             const searchProps = ["renderPrioritySpeaker", "renderIcons", "renderAvatar"];
             const VoiceUser = window.BdApi.Webpack.getAllByPrototypeKeys(...searchProps)[0];
+
+            this.ChannelListVoiceCategoryStore = window.BdApi.Webpack.getStore("VoiceStateStore");
 
             window.BdApi.Patcher.after("AllCallTimeCounter", VoiceUser.prototype, "render", (e, _, returnValue) => this.processVoiceUser(e, _, returnValue));
 
@@ -135,7 +136,7 @@ module.exports = (_ => {
         }
 
         processVoiceUser(e, _, returnValue) {
-            let {user} = e.props;
+            let { user } = e.props;
             let parent = returnValue.props.children.props.children;
             this.createUserTimer(user, parent);
         }
