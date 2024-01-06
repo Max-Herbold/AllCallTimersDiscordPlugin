@@ -1,13 +1,7 @@
 /**
  * @name AllCallTimeCounter
  * @author Max
- * @authorId
- * @version 1.0.0
- * @description Add call timer to all users in a voice channel.
- * @invite
- * @donate
- * @patreon
- * @website
+ * @description Add call timer to all users in a server voice channel.
  * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl https://raw.githubusercontent.com/Max-Herbold/AllCallTimersDiscordPlugin/main/AllCallTimeCounter.plugin.js
  * @authorLink https://github.com/Max-Herbold
