@@ -3,6 +3,8 @@ This is a plugin designed for Discord that adds a timer to each user in a voice 
 
 Simply drop this into the `AllCallTimeCounter.plugin.js` into the `plugins` folder.
 
+If using the `index.tsx` one must build from source and include this as a plugin in a subfolder of the `plugins` directory.
+
 ## View
 <img width="173" alt="image" src="https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/assets/49804267/d7ddf662-8d03-450d-b2d3-9e6cf26b9b9c">
 
