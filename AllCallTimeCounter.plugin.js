@@ -20,20 +20,18 @@ module.exports = (_ => {
         render() {
             let time = new Date(Date.now() - this.props.time).toISOString().substr(11, 8);
             return window.BdApi.React.createElement("div", {
-                className: "timeCounter —text-muted",
+                className: "timeCounter —text-muted usernameFont__71dd5 username__73ce9",
                 children: time,
                 style: {
-                    color: "red",
-                    fontSize: "12px",
+                    margin: 0,
                     fontWeight: "bold",
+                    fontFamily: "monospace",
+                    fontSize: 12,
                     position: "absolute",
-                    left: "120px",
-                    // backgroundColor: "#00000000",
-                    borderRadius: "5px",
-                    padding: "2px",
-                    margin: "0px",
-                    bottom: "9px",
-                    // border: "1px solid black"
+                    bottom: -8,
+                    left: 38,
+                    padding: 2,
+                    borderRadius: 3
                 }
             });
         }
