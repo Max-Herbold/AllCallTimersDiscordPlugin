@@ -11,4 +11,4 @@ This can be installed using any plugin manager.
 
 ## Versions available
 [allCallTimers/*](https://github.com/Max-Herbold/Vencord/tree/main/src/plugins/allCallTimers) is intended to be used with [Vencord](https://vencord.dev/).<br/>
-[AllCallTimeCounter.plugin.js](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/AllCallTimeCounter.plugin.js) is intended to be used with [BD](https://betterdiscord.app/).
+[AllCallTimeCounter.plugin.js](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/AllCallTimeCounter.plugin.js) is intended to be used with [BD](https://betterdiscord.app/). (Outdated and does not work well with large servers >~200 members)
