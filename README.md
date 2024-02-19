@@ -18,7 +18,8 @@ Installation is available through inbuilt plugin managers.
 
 ## Clarification
 **TL;DR**, until a *large* server is opened timers will only be accurate to somewhere between 7-15 minutes, but also could be much longer, it is not clear how passive updates work.<br/><br/>
-Discord does not automatically subscribe to updates for large servers (a server with ~>200 members, it's not exactly clear how "large server" is defined, this is a Discord term). Discord does get passive (bulk) updates for large servers but they occur only after some arbitrary period of time (generally seen to occur between 7-15 minutes per server) and only for one server at a time. However, as soon as a large server is opened once by a user, Discord subscribes to it, and only then all updates are given in real time. This was solved in the Vencord version by adding a toggle setting to subscribe to all servers on Discord launch but may not always be desired or even necessary.
+Discord does not automatically subscribe to updates for large servers (a server with ~>200 members, it's not exactly clear how "large server" is defined, this is a Discord term). Discord does get passive (bulk) updates for large servers but they occur only after some arbitrary period of time (generally seen to occur between 7-15 minutes per server) and only for one server at a time. However, as soon as a large server is opened once by a user, Discord subscribes to it, and only then all updates are given in real time. This was solved in the Vencord version by adding a toggle setting to subscribe to all servers on Discord launch but may not always be desired or even necessary.<br/><br/>
+"Update" refers to some communication from Discord containing updated information about the state of voice users/messages/channels.
 
 
 <details>
