@@ -10,7 +10,7 @@ This can be installed using any plugin manager.
 - Hook to user join/leave events (Only for BD Version)
 
 ## Versions available
-[allCallTimers/*](https://github.com/Max-Herbold/Vencord/tree/main/src/plugins/allCallTimers) is made for [Vencord](https://vencord.dev/).<br/>
+[allCallTimers/*](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/allCallTimers) is made for [Vencord](https://vencord.dev/).<br/>
 [AllCallTimeCounter.plugin.js](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/AllCallTimeCounter.plugin.js) is made for [BD](https://betterdiscord.app/). (Outdated: No option to subscribe to all servers on load, read *clarification*)
 
 ## Installation
