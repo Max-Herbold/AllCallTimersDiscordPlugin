@@ -46,7 +46,8 @@ module.exports = (_ => {
     }
 
     return class AllCallTimeCounter {
-        users = {};
+        users = new Map();  // value format: [channelId, lastUpdatedTime]
+
         load() { }
 
         allUsers(guilds) {
@@ -61,18 +62,18 @@ module.exports = (_ => {
             return users;
         }
 
+        updateInternal(userId, channelId) {
+            this.users.set(userId, [channelId, Date.now()]);
+        }
+
         updateSingleUser(userId, channelId) {
             // Used to keep track of currently rendered users in real time
-            if (this.users[userId] && this.users[userId]["channelId"] !== channelId) {
+            if (this.users.has(userId) && this.users.get(userId)[0] !== channelId) {
                 // User moved to a different channel
-                this.users[userId]["channelId"] = channelId;
-                this.users[userId]["actual_start_time"] = Date.now();
-            } else if (!this.users[userId]) {
+                this.updateInternal(userId, channelId);
+            } else if (!this.users.has(userId)) {
                 // User just joined a channel
-                this.users[userId] = {
-                    "channelId": channelId,
-                    "actual_start_time": Date.now()
-                };
+                this.updateInternal(userId, channelId);
             }
         }
 
@@ -81,9 +82,9 @@ module.exports = (_ => {
             const states = this.VoiceStateStore.getAllVoiceStates();
 
             const current_users = this.allUsers(states);
-            for (let userId in this.users) {
+            for (let userId in this.users.keys()) {
                 if (!current_users.includes(userId)) {
-                    delete this.users[userId];
+                    this.users.delete(userId);
                 }
             }
 
@@ -96,19 +97,15 @@ module.exports = (_ => {
                     const user = guild[userId];
                     const { channelId } = user;
                     if (channelId) {
-                        if (this.users[userId]) {
+                        if (this.users.has(userId)) {
                             // user is already in the users object
-                            if (this.users[userId]["channelId"] !== channelId) {
+                            if (this.users.get(userId)[0] !== channelId) {
                                 // user changed the channel
-                                this.users[userId]["channelId"] = channelId;
-                                this.users[userId]["actual_start_time"] = Date.now();
+                                this.updateInternal(userId, channelId);
                             }
                         } else {
                             // user is not in the users object
-                            this.users[userId] = {
-                                "channelId": channelId,
-                                "actual_start_time": Date.now()
-                            };
+                            this.updateInternal(userId, channelId);
                         }
                     }
                 }
@@ -133,7 +130,7 @@ module.exports = (_ => {
         }
 
         createUserTimer(user, parent) {
-            const time = this.users[user.id]["actual_start_time"];
+            const time = this.users.get(user.id)[1]
             const tag = window.BdApi.React.createElement(Timer, { time: time });
 
             const pos = parent.length - 1;
