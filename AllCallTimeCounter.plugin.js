@@ -52,9 +52,9 @@ module.exports = (_ => {
         allUsers(guilds) {
             // return an array of all users in all guilds
             let users = [];
-            for (let guildId in guilds) {
-                let guild = guilds[guildId];
-                for (let userId in guild) {
+            for (const guildId in guilds) {
+                const guild = guilds[guildId];
+                for (const userId in guild) {
                     users.push(userId);
                 }
             }
@@ -62,17 +62,25 @@ module.exports = (_ => {
         }
 
         updateSingleUser(userId, channelId) {
-            // Used by the injection to detect a user's channel change BEFORE it is called to render
+            // Used to keep track of currently rendered users in real time
             if (this.users[userId] && this.users[userId]["channelId"] !== channelId) {
+                // User moved to a different channel
                 this.users[userId]["channelId"] = channelId;
                 this.users[userId]["actual_start_time"] = Date.now();
+            } else if (!this.users[userId]) {
+                // User just joined a channel
+                this.users[userId] = {
+                    "channelId": channelId,
+                    "actual_start_time": Date.now()
+                };
             }
         }
 
         runEverySecond() {
-            let states = this.VoiceStateStore.getAllVoiceStates();
+            // Keeps track of users in the background at 1Hz
+            const states = this.VoiceStateStore.getAllVoiceStates();
 
-            let current_users = this.allUsers(states);
+            const current_users = this.allUsers(states);
             for (let userId in this.users) {
                 if (!current_users.includes(userId)) {
                     delete this.users[userId];
@@ -82,11 +90,11 @@ module.exports = (_ => {
             // states is an array of {guildId: {userId: {channelId: channelId}}}
             // iterate through all guilds and update the users, check if the user is in the same channel as before
             // if userId is not in any guild it should be deleted from the users object
-            for (let guildId in states) {
+            for (const guildId in states) {
                 let guild = states[guildId];
-                for (let userId in guild) {
-                    let user = guild[userId];
-                    let { channelId } = user;
+                for (const userId in guild) {
+                    const user = guild[userId];
+                    const { channelId } = user;
                     if (channelId) {
                         if (this.users[userId]) {
                             // user is already in the users object
@@ -125,23 +133,17 @@ module.exports = (_ => {
         }
 
         createUserTimer(user, parent) {
-            let time = null;
+            const time = this.users[user.id]["actual_start_time"];
+            const tag = window.BdApi.React.createElement(Timer, { time: time });
 
-            try {
-                time = this.users[user.id]["actual_start_time"];
-            } catch (e) {
-                time = Date.now();
-            }
-            let tag = window.BdApi.React.createElement(Timer, { time: time });
-
-            let pos = parent.length - 1;
+            const pos = parent.length - 1;
             parent.splice(pos, 0, tag);
         }
 
         processVoiceUser(e, _, returnValue) {
-            let { user } = e.props;
+            const { user } = e.props;
             this.updateSingleUser(user.id, e.props.channelId);  // update user entry before trying to render
-            let parent = returnValue.props.children.props.children;
+            const parent = returnValue.props.children.props.children;
             this.createUserTimer(user, parent);
         }
     };
