@@ -5,7 +5,7 @@
  * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl https://raw.githubusercontent.com/Max-Herbold/AllCallTimersDiscordPlugin/main/AllCallTimeCounter.plugin.js
  * @authorLink https://github.com/Max-Herbold
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 module.exports = (_ => {
@@ -20,18 +20,14 @@ module.exports = (_ => {
         render() {
             let time = new Date(Date.now() - this.props.time).toISOString().substr(11, 8);
             return window.BdApi.React.createElement("div", {
-                className: "timeCounter —text-muted usernameFont__71dd5 username__73ce9",
+                className: "timeCounter",
                 children: time,
                 style: {
-                    margin: 0,
+                    marginTop: -6,
                     fontWeight: "bold",
                     fontFamily: "monospace",
-                    fontSize: 12,
-                    position: "absolute",
-                    bottom: -8,
-                    left: 38,
-                    padding: 2,
-                    borderRadius: 3
+                    fontSize: 11,
+                    position: "relative",
                 }
             });
         }
@@ -46,53 +42,66 @@ module.exports = (_ => {
     }
 
     return class AllCallTimeCounter {
-        users = {};
+        users = new Map();  // value format: [channelId, lastUpdatedTime]
+
         load() { }
 
         allUsers(guilds) {
             // return an array of all users in all guilds
             let users = [];
-            for (let guildId in guilds) {
-                let guild = guilds[guildId];
-                for (let userId in guild) {
+            for (const guildId in guilds) {
+                const guild = guilds[guildId];
+                for (const userId in guild) {
                     users.push(userId);
                 }
             }
             return users;
         }
 
-        runEverySecond() {
-            let states = this.VoiceStateStore.getAllVoiceStates();
+        updateInternal(userId, channelId) {
+            this.users.set(userId, [channelId, Date.now()]);
+        }
 
-            let current_users = this.allUsers(states);
-            for (let userId in this.users) {
+        updateSingleUser(userId, channelId) {
+            // Used to keep track of currently rendered users in real time
+            if (this.users.has(userId) && this.users.get(userId)[0] !== channelId) {
+                // User moved to a different channel
+                this.updateInternal(userId, channelId);
+            } else if (!this.users.has(userId)) {
+                // User just joined a channel
+                this.updateInternal(userId, channelId);
+            }
+        }
+
+        runEverySecond() {
+            // Keeps track of users in the background at 1Hz
+            const states = this.VoiceStateStore.getAllVoiceStates();
+
+            const current_users = this.allUsers(states);
+            for (let userId in this.users.keys()) {
                 if (!current_users.includes(userId)) {
-                    delete this.users[userId];
+                    this.users.delete(userId);
                 }
             }
 
             // states is an array of {guildId: {userId: {channelId: channelId}}}
             // iterate through all guilds and update the users, check if the user is in the same channel as before
             // if userId is not in any guild it should be deleted from the users object
-            for (let guildId in states) {
+            for (const guildId in states) {
                 let guild = states[guildId];
-                for (let userId in guild) {
-                    let user = guild[userId];
-                    let { channelId } = user;
+                for (const userId in guild) {
+                    const user = guild[userId];
+                    const { channelId } = user;
                     if (channelId) {
-                        if (this.users[userId]) {
+                        if (this.users.has(userId)) {
                             // user is already in the users object
-                            if (this.users[userId]["channelId"] !== channelId) {
+                            if (this.users.get(userId)[0] !== channelId) {
                                 // user changed the channel
-                                this.users[userId]["channelId"] = channelId;
-                                this.users[userId]["actual_start_time"] = Date.now();
+                                this.updateInternal(userId, channelId);
                             }
                         } else {
                             // user is not in the users object
-                            this.users[userId] = {
-                                "channelId": channelId,
-                                "actual_start_time": Date.now()
-                            };
+                            this.updateInternal(userId, channelId);
                         }
                     }
                 }
@@ -117,22 +126,16 @@ module.exports = (_ => {
         }
 
         createUserTimer(user, parent) {
-            let time = null;
+            const time = this.users.get(user.id)[1]
+            const tag = window.BdApi.React.createElement(Timer, { time: time });
 
-            try {
-                time = this.users[user.id]["actual_start_time"];
-            } catch (e) {
-                return;
-            }
-            let tag = window.BdApi.React.createElement(Timer, { time: time });
-
-            let pos = parent.length - 1;
-            parent.splice(pos, 0, tag);
+            parent[2].props.children.splice(1, 0, tag);
         }
 
         processVoiceUser(e, _, returnValue) {
-            let { user } = e.props;
-            let parent = returnValue.props.children.props.children;
+            const { user } = e.props;
+            this.updateSingleUser(user.id, e.props.channelId);  // update user entry before trying to render
+            const parent = returnValue.props.children.props.children;
             this.createUserTimer(user, parent);
         }
     };
