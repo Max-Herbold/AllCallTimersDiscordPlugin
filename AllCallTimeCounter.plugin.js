@@ -20,18 +20,14 @@ module.exports = (_ => {
         render() {
             let time = new Date(Date.now() - this.props.time).toISOString().substr(11, 8);
             return window.BdApi.React.createElement("div", {
-                className: "timeCounter —text-muted usernameFont__71dd5 username__73ce9",
+                className: "timeCounter",
                 children: time,
                 style: {
-                    margin: 0,
+                    marginTop: -6,
                     fontWeight: "bold",
                     fontFamily: "monospace",
-                    fontSize: 12,
-                    position: "absolute",
-                    bottom: -8,
-                    left: 38,
-                    padding: 2,
-                    borderRadius: 3
+                    fontSize: 11,
+                    position: "relative",
                 }
             });
         }
@@ -133,8 +129,7 @@ module.exports = (_ => {
             const time = this.users.get(user.id)[1]
             const tag = window.BdApi.React.createElement(Timer, { time: time });
 
-            const pos = parent.length - 1;
-            parent.splice(pos, 0, tag);
+            parent[2].props.children.splice(1, 0, tag);
         }
 
         processVoiceUser(e, _, returnValue) {
