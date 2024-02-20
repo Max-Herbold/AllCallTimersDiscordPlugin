@@ -46,7 +46,7 @@ module.exports = (_ => {
     }
 
     return class AllCallTimeCounter {
-        users = new Map();
+        users = new Map();  // value format: [channelId, lastUpdatedTime]
 
         load() { }
 
@@ -62,14 +62,18 @@ module.exports = (_ => {
             return users;
         }
 
+        updateInternal(userId, channelId) {
+            this.users.set(userId, [channelId, Date.now()]);
+        }
+
         updateSingleUser(userId, channelId) {
             // Used to keep track of currently rendered users in real time
             if (this.users.has(userId) && this.users.get(userId)[0] !== channelId) {
                 // User moved to a different channel
-                this.users.set(userId, [channelId, Date.now()]);
+                this.updateInternal(userId, channelId);
             } else if (!this.users.has(userId)) {
                 // User just joined a channel
-                this.users.set(userId, [channelId, Date.now()]);
+                this.updateInternal(userId, channelId);
             }
         }
 
@@ -97,11 +101,11 @@ module.exports = (_ => {
                             // user is already in the users object
                             if (this.users.get(userId)[0] !== channelId) {
                                 // user changed the channel
-                                this.users.set(userId, [channelId, Date.now()]);
+                                this.updateInternal(userId, channelId);
                             }
                         } else {
                             // user is not in the users object
-                            this.users.set(userId, [channelId, Date.now()]);
+                            this.updateInternal(userId, channelId);
                         }
                     }
                 }
@@ -134,14 +138,10 @@ module.exports = (_ => {
         }
 
         processVoiceUser(e, _, returnValue) {
-            Performance = window.performance;
-            const startTime = Performance.now();
             const { user } = e.props;
             this.updateSingleUser(user.id, e.props.channelId);  // update user entry before trying to render
             const parent = returnValue.props.children.props.children;
             this.createUserTimer(user, parent);
-            const endTime = Performance.now();
-            console.log(`Processed user ${user.username} in ${endTime - startTime}ms`);
         }
     };
 })();
