@@ -5,7 +5,7 @@
  * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl https://raw.githubusercontent.com/Max-Herbold/AllCallTimersDiscordPlugin/main/AllCallTimeCounter.plugin.js
  * @authorLink https://github.com/Max-Herbold
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 module.exports = (_ => {
@@ -59,6 +59,14 @@ module.exports = (_ => {
                 }
             }
             return users;
+        }
+
+        updateSingleUser(userId, channelId) {
+            // Used by the injection to detect a user's channel change BEFORE it is called to render
+            if (this.users[userId] && this.users[userId]["channelId"] !== channelId) {
+                this.users[userId]["channelId"] = channelId;
+                this.users[userId]["actual_start_time"] = Date.now();
+            }
         }
 
         runEverySecond() {
@@ -122,7 +130,7 @@ module.exports = (_ => {
             try {
                 time = this.users[user.id]["actual_start_time"];
             } catch (e) {
-                return;
+                time = Date.now();
             }
             let tag = window.BdApi.React.createElement(Timer, { time: time });
 
@@ -132,6 +140,7 @@ module.exports = (_ => {
 
         processVoiceUser(e, _, returnValue) {
             let { user } = e.props;
+            this.updateSingleUser(user.id, e.props.channelId);  // update user entry before trying to render
             let parent = returnValue.props.children.props.children;
             this.createUserTimer(user, parent);
         }
