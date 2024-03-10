@@ -7,7 +7,7 @@ This can be installed using most common plugin manager.
 <img width="323rem" alt="image" src="https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/assets/49804267/52ed9bf4-f830-4dfa-b565-a9cae5bb03ef">
 <img width="300rem" alt="image" src="https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/assets/49804267/a4e9ba8d-a4a8-4041-a3c1-cd5ea57b1822">
 <br/>
-<img height="346rem" alt="image" src="https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/assets/49804267/ff1808fa-1b6d-4007-a3bc-685e0b75c75d">
+<img height="346rem" alt="image" src="https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/assets/49804267/05c5e29a-0cb6-4d0e-8a5d-55f9da2a400b">
 <img width="424rem" alt="image" src="https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/assets/49804267/aeb745ba-819b-4a96-9c18-874451780278">
 <br/>
 <sup>*The settings are only available on Vencord. Clock icon is not available on BD.</sup>
