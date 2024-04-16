@@ -23,11 +23,13 @@ module.exports = (_ => {
                 className: "timeCounter",
                 children: time,
                 style: {
-                    marginTop: -6,
+                    position: "absolute",
+                    top:23,
+                    right:138,
                     fontWeight: "bold",
-                    fontFamily: "monospace",
-                    fontSize: 11,
-                    position: "relative",
+                    fontFamily: "gg sans",
+                    fontSize: 9,                    
+                    color: "#949ba4"
                 }
             });
         }
