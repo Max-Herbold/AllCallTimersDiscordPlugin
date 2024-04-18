@@ -28,6 +28,7 @@ module.exports = (_ => {
                     fontFamily: "monospace",
                     fontSize: 11,
                     position: "relative",
+                    color: "var(--channels-default)",
                 }
             });
         }
