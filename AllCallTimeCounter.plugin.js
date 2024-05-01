@@ -5,7 +5,7 @@
  * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl https://raw.githubusercontent.com/Max-Herbold/AllCallTimersDiscordPlugin/main/AllCallTimeCounter.plugin.js
  * @authorLink https://github.com/Max-Herbold
- * @version 1.0.2
+ * @version 1.0.3
  */
 
 module.exports = (_ => {
@@ -129,7 +129,7 @@ module.exports = (_ => {
             const time = this.users.get(user.id)[1]
             const tag = window.BdApi.React.createElement(Timer, { time: time });
 
-            parent[2].props.children.splice(1, 0, tag);
+            parent.splice(4, 0, tag);
         }
 
         processVoiceUser(e, _, returnValue) {
