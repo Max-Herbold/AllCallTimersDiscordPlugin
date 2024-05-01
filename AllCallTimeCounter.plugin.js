@@ -129,7 +129,7 @@ module.exports = (_ => {
             const time = this.users.get(user.id)[1]
             const tag = window.BdApi.React.createElement(Timer, { time: time });
 
-            parent.splice(3, 0, tag);
+            parent.splice(4, 0, tag);
         }
 
         processVoiceUser(e, _, returnValue) {
