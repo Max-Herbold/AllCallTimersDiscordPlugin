@@ -23,8 +23,6 @@ module.exports = (_ => {
                 className: "timeCounter",
                 children: time,
                 style: {
-                    // set the margin to the right of the user's name
-                    marginTop: -4,
                     fontWeight: "bold",
                     fontFamily: "monospace",
                     fontSize: 11,
@@ -136,7 +134,7 @@ module.exports = (_ => {
             const tag = window.BdApi.React.createElement(Timer, { time: time });
 
             try{
-                parent[2].props.children.props.children.props.children.push(tag);
+                parent.splice(4, 0, tag);
             } catch (e) {}
         }
 
