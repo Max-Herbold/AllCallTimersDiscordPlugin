@@ -5,7 +5,7 @@
  * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl https://raw.githubusercontent.com/Max-Herbold/AllCallTimersDiscordPlugin/main/AllCallTimeCounter.plugin.js
  * @authorLink https://github.com/Max-Herbold
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 module.exports = (_ => {
@@ -63,6 +63,10 @@ module.exports = (_ => {
         }
 
         updateSingleUser(userId, channelId) {
+            // if channelId is undefined return
+            if (!channelId) {
+                return;
+            }
             // Used to keep track of currently rendered users in real time
             if (this.users.has(userId) && this.users.get(userId)[0] !== channelId) {
                 // User moved to a different channel
@@ -129,7 +133,9 @@ module.exports = (_ => {
             const time = this.users.get(user.id)[1]
             const tag = window.BdApi.React.createElement(Timer, { time: time });
 
-            parent.splice(4, 0, tag);
+            try{
+                parent.splice(4, 0, tag);
+            } catch (e) {}
         }
 
         processVoiceUser(e, _, returnValue) {
