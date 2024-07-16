@@ -23,10 +23,11 @@ module.exports = (_ => {
                 className: "timeCounter",
                 children: time,
                 style: {
+                    position: "relative",
+                    marginTop: -6,
                     fontWeight: "bold",
                     fontFamily: "monospace",
                     fontSize: 11,
-                    position: "relative",
                     color: "var(--channels-default)",
                 }
             });
@@ -133,9 +134,10 @@ module.exports = (_ => {
             const time = this.users.get(user.id)[1]
             const tag = window.BdApi.React.createElement(Timer, { time: time });
 
-            try{
-                parent.splice(4, 0, tag);
-            } catch (e) {}
+            try {
+                // parent.splice(4, 0, tag);
+                parent[2].props.children.props.children.props.children.push(tag);
+            } catch (e) { }
         }
 
         processVoiceUser(e, _, returnValue) {
