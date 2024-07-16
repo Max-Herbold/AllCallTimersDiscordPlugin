@@ -82,7 +82,7 @@ module.exports = (_ => {
             const states = this.VoiceStateStore.getAllVoiceStates();
 
             const current_users = this.allUsers(states);
-            for (let userId in this.users.keys()) {
+            for (let userId of Array.from(this.users.keys())) {
                 if (!current_users.includes(userId)) {
                     this.users.delete(userId);
                 }
