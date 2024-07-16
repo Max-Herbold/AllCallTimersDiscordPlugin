@@ -23,11 +23,10 @@ module.exports = (_ => {
                 className: "timeCounter",
                 children: time,
                 style: {
-                    position: "relative",
-                    marginTop: -6,
                     fontWeight: "bold",
                     fontFamily: "monospace",
                     fontSize: 11,
+                    position: "relative",
                     color: "var(--channels-default)",
                 }
             });
