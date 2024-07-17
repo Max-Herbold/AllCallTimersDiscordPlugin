@@ -5,7 +5,7 @@
  * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl https://raw.githubusercontent.com/Max-Herbold/AllCallTimersDiscordPlugin/main/AllCallTimeCounter.plugin.js
  * @authorLink https://github.com/Max-Herbold
- * @version 1.0.4
+ * @version 1.0.5
  */
 
 module.exports = (_ => {
@@ -83,7 +83,7 @@ module.exports = (_ => {
             const states = this.VoiceStateStore.getAllVoiceStates();
 
             const current_users = this.allUsers(states);
-            for (let userId in this.users.keys()) {
+            for (let userId of Array.from(this.users.keys())) {
                 if (!current_users.includes(userId)) {
                     this.users.delete(userId);
                 }
