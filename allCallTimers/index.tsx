@@ -101,7 +101,10 @@ let runOneTime = true;
 export default definePlugin({
     name: "AllCallTimers",
     description: "Add call timer to all users in a server voice channel.",
-    authors: [Devs.Max, Devs.D3SOX],
+    authors: [{
+        name: "Max",
+        id: 0n
+    }, Devs.D3SOX],
 
     settings,
 
