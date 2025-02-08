@@ -1,16 +1,10 @@
-/*
- * Vencord, a Discord client mod
- * Copyright (c) 2024 Vendicated and contributors
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
-
 import { definePluginSettings } from "@api/Settings";
 import ErrorBoundary from "@components/ErrorBoundary";
 import { Devs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
 import { FluxDispatcher, GuildStore, UserStore } from "@webpack/common";
-import { PassiveUpdateState, VoiceState } from "@webpack/types";
 
+import { PassiveUpdateState, VoiceState } from "./types";
 import { Timer } from "./Timer";
 
 export const settings = definePluginSettings({
