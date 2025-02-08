@@ -5,7 +5,7 @@
  * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl https://raw.githubusercontent.com/Max-Herbold/AllCallTimersDiscordPlugin/main/AllCallTimeCounter.plugin.js
  * @authorLink https://github.com/Max-Herbold
- * @version 1.0.5
+ * @version 1.0.6
  */
 
 module.exports = (_ => {
@@ -23,12 +23,12 @@ module.exports = (_ => {
                 className: "timeCounter",
                 children: time,
                 style: {
-                    position: "relative",
-                    marginTop: -6,
                     fontWeight: "bold",
                     fontFamily: "monospace",
                     fontSize: 11,
+                    position: "relative",
                     color: "var(--channels-default)",
+                    marginTop: -6,
                 }
             });
         }
@@ -83,7 +83,7 @@ module.exports = (_ => {
             const states = this.VoiceStateStore.getAllVoiceStates();
 
             const current_users = this.allUsers(states);
-            for (let userId of Array.from(this.users.keys())) {
+            for (let userId in this.users.keys()) {
                 if (!current_users.includes(userId)) {
                     this.users.delete(userId);
                 }
@@ -114,12 +114,11 @@ module.exports = (_ => {
         }
 
         start() {
-            const searchProps = ["renderPrioritySpeaker", "renderIcons", "renderAvatar"];
-            const VoiceUser = window.BdApi.Webpack.getAllByPrototypeKeys(...searchProps)[0];
+            const VoiceUser = window.BdApi.Webpack.getBySource("iconPriortySpeakerSpeaking", "avatarContainer");
 
             this.VoiceStateStore = window.BdApi.Webpack.getStore("VoiceStateStore");
 
-            window.BdApi.Patcher.after("AllCallTimeCounter", VoiceUser.prototype, "render", (e, _, returnValue) => this.processVoiceUser(e, _, returnValue));
+            window.BdApi.Patcher.after("AllCallTimeCounter", VoiceUser, "ZP", (_, [props], returnValue) => this.processVoiceUser(_, [props], returnValue));
 
             // TODO: Hook this to user join/leave events
             this.interval = setInterval(() => this.runEverySecond(), 1000);
@@ -140,9 +139,10 @@ module.exports = (_ => {
             } catch (e) { }
         }
 
-        processVoiceUser(e, _, returnValue) {
-            const { user } = e.props;
-            this.updateSingleUser(user.id, e.props.channelId);  // update user entry before trying to render
+        processVoiceUser(_, [props], returnValue) {
+            // console.log(e, _, returnValue);
+            const { user } = props;
+            this.updateSingleUser(user.id, props.channelId);  // update user entry before trying to render
             const parent = returnValue.props.children.props.children;
             this.createUserTimer(user, parent);
         }
