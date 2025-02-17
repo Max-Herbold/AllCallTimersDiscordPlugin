@@ -13,7 +13,7 @@ This can be installed using the most common plugin managers.
 <sup>*The settings are only available on Vencord. Clock icon is not available on BD.</sup>
 
 ## Versions available
-[AllCallTimeCounter.plugin.js](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/AllCallTimeCounter.plugin.js) is made for [BD](https://betterdiscord.app/plugin/AllCall
+[AllCallTimeCounter.plugin.js](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/AllCallTimeCounter.plugin.js) is made for [BD](https://betterdiscord.app/plugin/AllCallTimeCounter).<br/>
 [allCallTimers/*](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/allCallTimers) is made for [Vencord](https://vencord.dev/).
 
 ## Installation
