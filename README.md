@@ -13,11 +13,12 @@ This can be installed using the most common plugin managers.
 <sup>*The settings are only available on Vencord. Clock icon is not available on BD.</sup>
 
 ## Versions available
-[allCallTimers/*](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/allCallTimers) is made for [Vencord](https://vencord.dev/).<br/>
-[AllCallTimeCounter.plugin.js](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/AllCallTimeCounter.plugin.js) is made for [BD](https://betterdiscord.app/plugin/AllCallTimeCounter). (Outdated: No option to subscribe to all servers on load, read *clarification*)
+[AllCallTimeCounter.plugin.js](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/AllCallTimeCounter.plugin.js) is made for [BD](https://betterdiscord.app/plugin/AllCallTimeCounter).<br/> 
+[allCallTimers/*](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/allCallTimers) is made for [Vencord](https://vencord.dev/). ⚠️ Currently broken (thanks Discord) ⚠️
 
 ## Installation
-Installation is available through inbuilt plugin managers.
+Available through **BetterDiscord** plugin manager.<br/>
+**Vencord** requires a manual installation, https://docs.vencord.dev/installing/custom-plugins/.
 
 ## Clarification
 **TL;DR**, until a *large* server is opened timers will only be accurate to somewhere between 7-15 minutes, but also could be much longer, it is not clear how passive updates work.<br/><br/>
