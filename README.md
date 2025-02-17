@@ -14,7 +14,7 @@ This can be installed using the most common plugin managers.
 
 ## Versions available
 [AllCallTimeCounter.plugin.js](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/AllCallTimeCounter.plugin.js) is made for [BD](https://betterdiscord.app/plugin/AllCallTimeCounter).<br/> 
-[allCallTimers/*](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/allCallTimers) is made for [Vencord](https://vencord.dev/). ⚠️ Currently broken (thanks Discord) ⚠️
+[allCallTimers/*](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/allCallTimers) is made for [Vencord](https://vencord.dev/).
 
 ## Installation
 Available through **BetterDiscord** plugin manager.<br/>
