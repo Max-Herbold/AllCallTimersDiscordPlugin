@@ -5,7 +5,7 @@
  * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl https://raw.githubusercontent.com/Max-Herbold/AllCallTimersDiscordPlugin/main/AllCallTimeCounter.plugin.js
  * @authorLink https://github.com/Max-Herbold
- * @version 1.0.7
+ * @version 1.0.8
  */
 
 module.exports = (_ => {
@@ -114,7 +114,7 @@ module.exports = (_ => {
         }
 
         start() {
-            const VoiceUser = window.BdApi.Webpack.getBySource("iconPriortySpeakerSpeaking", "avatarContainer");
+            const VoiceUser = window.BdApi.Webpack.getBySource("iconPriortySpeakerSpeaking", "avatarContainer", "getAvatarURL");
 
             this.VoiceStateStore = window.BdApi.Webpack.getStore("VoiceStateStore");
 
