@@ -5,7 +5,7 @@
  * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl https://raw.githubusercontent.com/Max-Herbold/AllCallTimersDiscordPlugin/main/AllCallTimeCounter.plugin.js
  * @authorLink https://github.com/Max-Herbold
- * @version 1.0.9
+ * @version 1.0.10
  */
 
 module.exports = (_ => {
@@ -142,7 +142,7 @@ module.exports = (_ => {
         }
 
         processVoiceUser(_, [props], returnValue) {
-            console.log(_, props, returnValue);
+            // console.log(_, props, returnValue);
             const { user } = props;
             this.updateSingleUser(user.id, props.channelId);  // update user entry before trying to render
             const parent = returnValue.props.children.props.children;
