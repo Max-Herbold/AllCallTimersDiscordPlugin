@@ -5,7 +5,7 @@
  * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl https://raw.githubusercontent.com/Max-Herbold/AllCallTimersDiscordPlugin/main/AllCallTimeCounter.plugin.js
  * @authorLink https://github.com/Max-Herbold
- * @version 1.0.8
+ * @version 1.0.9
  */
 
 module.exports = (_ => {
@@ -26,9 +26,10 @@ module.exports = (_ => {
                     fontWeight: "bold",
                     fontFamily: "monospace",
                     fontSize: 11,
-                    position: "relative",
+                    position: "absolute",
                     color: "var(--channels-default)",
-                    marginTop: -6,
+                    marginTop: 23,
+                    marginLeft: 40,
                 }
             });
         }
@@ -81,6 +82,7 @@ module.exports = (_ => {
         runEverySecond() {
             // Keeps track of users in the background at 1Hz
             const states = this.VoiceStateStore.getAllVoiceStates();
+            console.log(states);
 
             const current_users = this.allUsers(states);
             for (let userId of Array.from(this.users.keys())) {
@@ -134,13 +136,13 @@ module.exports = (_ => {
             const tag = window.BdApi.React.createElement(Timer, { time: time });
 
             try {
-                // parent.splice(4, 0, tag);
-                parent[2].props.children.props.children.props.children.push(tag);
+                parent.splice(3, 0, tag);
+                // parent[2].props.children.props.children.props.children.push(tag);
             } catch (e) { }
         }
 
         processVoiceUser(_, [props], returnValue) {
-            // console.log(e, _, returnValue);
+            console.log(_, props, returnValue);
             const { user } = props;
             this.updateSingleUser(user.id, props.channelId);  // update user entry before trying to render
             const parent = returnValue.props.children.props.children;
