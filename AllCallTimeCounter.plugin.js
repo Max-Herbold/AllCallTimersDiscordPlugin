@@ -5,7 +5,7 @@
  * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl https://raw.githubusercontent.com/Max-Herbold/AllCallTimersDiscordPlugin/main/AllCallTimeCounter.plugin.js
  * @authorLink https://github.com/Max-Herbold
- * @version 1.0.10
+ * @version 1.0.11
  */
 
 module.exports = (_ => {
@@ -82,7 +82,6 @@ module.exports = (_ => {
         runEverySecond() {
             // Keeps track of users in the background at 1Hz
             const states = this.VoiceStateStore.getAllVoiceStates();
-            console.log(states);
 
             const current_users = this.allUsers(states);
             for (let userId of Array.from(this.users.keys())) {
