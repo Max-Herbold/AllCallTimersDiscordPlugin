@@ -1,8 +1,6 @@
 # AllCallTimers Discord Plugin
 This is a plugin designed for Discord that adds a timer to each user in a voice channel.
 
-This can be installed using the most common plugin managers.
-
 ## View
 <img width="323rem" alt="image" src="https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/assets/49804267/52ed9bf4-f830-4dfa-b565-a9cae5bb03ef">
 <img width="300rem" alt="image" src="https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/assets/49804267/a4e9ba8d-a4a8-4041-a3c1-cd5ea57b1822">
