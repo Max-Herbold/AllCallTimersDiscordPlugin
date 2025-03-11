@@ -15,7 +15,7 @@ This is a plugin designed for Discord that adds a timer to each user in a voice 
 [allCallTimers/*](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/allCallTimers) is made for [Vencord](https://vencord.dev/).
 
 ## Installation
-Available through **BetterDiscord** plugin manager.<br/>
+Available through [**BetterDiscord** plugin manager](https://betterdiscord.app/plugin/AllCallTimeCounter).<br/>
 **Vencord** requires a manual installation, https://docs.vencord.dev/installing/custom-plugins/.
 
 ## Clarification
