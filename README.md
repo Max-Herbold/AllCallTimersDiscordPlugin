@@ -1,8 +1,6 @@
 # AllCallTimers Discord Plugin
 This is a plugin designed for Discord that adds a timer to each user in a voice channel.
 
-This can be installed using the most common plugin managers.
-
 ## View
 <img width="323rem" alt="image" src="https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/assets/49804267/52ed9bf4-f830-4dfa-b565-a9cae5bb03ef">
 <img width="300rem" alt="image" src="https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/assets/49804267/a4e9ba8d-a4a8-4041-a3c1-cd5ea57b1822">
@@ -13,11 +11,11 @@ This can be installed using the most common plugin managers.
 <sup>*The settings are only available on Vencord. Clock icon is not available on BD.</sup>
 
 ## Versions available
-[AllCallTimeCounter.plugin.js](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/AllCallTimeCounter.plugin.js) is made for [BD](https://betterdiscord.app/plugin/AllCallTimeCounter).<br/> 
-[allCallTimers/*](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/allCallTimers) is made for [Vencord](https://vencord.dev/). ⚠️ Currently broken (thanks Discord) ⚠️
+[AllCallTimeCounter.plugin.js](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/AllCallTimeCounter.plugin.js) is made for [BD](https://betterdiscord.app/plugin/AllCallTimeCounter).<br/>
+[allCallTimers/*](https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/tree/main/allCallTimers) is made for [Vencord](https://vencord.dev/).
 
 ## Installation
-Available through **BetterDiscord** plugin manager.<br/>
+Available through [**BetterDiscord** plugin manager](https://betterdiscord.app/plugin/AllCallTimeCounter).<br/>
 **Vencord** requires a manual installation, https://docs.vencord.dev/installing/custom-plugins/.
 
 ## Clarification
