@@ -5,7 +5,7 @@
  * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl https://raw.githubusercontent.com/Max-Herbold/AllCallTimersDiscordPlugin/main/AllCallTimeCounter.plugin.js
  * @authorLink https://github.com/Max-Herbold
- * @version 1.0.11
+ * @version 1.0.12
  */
 
 module.exports = (_ => {
@@ -29,7 +29,7 @@ module.exports = (_ => {
                     position: "absolute",
                     color: "var(--channels-default)",
                     marginTop: 23,
-                    marginLeft: 40,
+                    marginLeft: 32,
                 }
             });
         }
@@ -119,7 +119,7 @@ module.exports = (_ => {
 
             this.VoiceStateStore = window.BdApi.Webpack.getStore("VoiceStateStore");
 
-            window.BdApi.Patcher.after("AllCallTimeCounter", VoiceUser, "ZP", (_, [props], returnValue) => this.processVoiceUser(_, [props], returnValue));
+            window.BdApi.Patcher.after("AllCallTimeCounter", VoiceUser.ZP, "render", (_, [props], returnValue) => this.processVoiceUser(_, [props], returnValue));
 
             // TODO: Hook this to user join/leave events
             this.interval = setInterval(() => this.runEverySecond(), 1000);
