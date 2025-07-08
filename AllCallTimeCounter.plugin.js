@@ -77,7 +77,6 @@ module.exports = class AllCallTimeCounter {
         return this.BdApi.UI.buildSettingsPanel({
             settings: config.settings,
             onChange: (category, id, value) => {
-                console.log(category, id, value, typeof value);
                 switch (id) {
                     case "watchLargeGuilds":
                         if (value) {
@@ -93,7 +92,8 @@ module.exports = class AllCallTimeCounter {
 
     start() {
         initSettingsValues();
-        this.BdApi.DOM.addStyle(`[class^="draggable_"], [class^="voiceUser_"] { height: min-content !important; }`)
+        this.BdApi.DOM.addStyle(`[class^="draggable_"], [class^="voiceUser_"] { height: min-content !important; }
+            div[class^='list_'][class*='collapsed_'] .timeCounter{display:none;}`)
         
         DiscordModules.subscribe("VOICE_STATE_UPDATES", VOICE_STATE_UPDATES);
         DiscordModules.subscribe("PASSIVE_UPDATE_V1", PASSIVE_UPDATE_V1);
@@ -103,7 +103,6 @@ module.exports = class AllCallTimeCounter {
         const VoiceUser = Webpack.getBySource("iconPriortySpeakerSpeaking", "avatarContainer", "getAvatarURL");
 
         Patcher.after(this.meta.name, VoiceUser.ZP, "render", (thisObject, args, returnValue) => {
-            console.log("rendering user", args, returnValue);
             if (settings.showWithoutHover){
                 const usernameDiv = Utils.findInTree(returnValue, (n) => n?.props?.className?.includes("username") && n?.props?.children, { walkable: ["props", "children"] });
                 usernameDiv.props.children.push(renderTimer(args[0].user.id));
@@ -132,7 +131,7 @@ function TimerIcon(props) {
             viewBox: "0 0 455 455",
             height: height,
             width: width,
-            className: className,
+            className: `timeCounter ${className}`,
             style: { color: "var(--channels-default)" }
         },
         React.createElement("path", {
