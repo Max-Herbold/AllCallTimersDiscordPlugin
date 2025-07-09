@@ -5,7 +5,7 @@
  * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl https://raw.githubusercontent.com/Max-Herbold/AllCallTimersDiscordPlugin/main/AllCallTimeCounter.plugin.js
  * @authorLink https://github.com/Max-Herbold
- * @version 1.0.12
+ * @version 1.1.0
  */
 
 const { Tooltip } = BdApi.Components;
@@ -93,6 +93,7 @@ module.exports = class AllCallTimeCounter {
     start() {
         initSettingsValues();
         this.BdApi.DOM.addStyle(`[class^="draggable_"], [class^="voiceUser_"] { height: min-content !important; }
+            div[class^='voiceUser_'] div[class^='chipletParent_'] { vertical-align: super; }
             div[class^='list_'][class*='collapsed_'] .timeCounter{display:none;}`)
         
         DiscordModules.subscribe("VOICE_STATE_UPDATES", VOICE_STATE_UPDATES);
@@ -148,6 +149,7 @@ function TimerText({ text, className }) {
             fontWeight: "bold",
             fontFamily: "monospace",
             fontSize: "12px",
+            lineHeight: "8px"
         },
         children: text
     });
