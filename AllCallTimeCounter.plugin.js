@@ -157,7 +157,6 @@ function TimerText({ text, className }) {
 
 
 function useFixedTimer({ interval = 1000, initialTime = Date.now(), userId }) {
-    console.log(`useFixedTimer for user ${userId} with initial time ${initialTime}`, userJoinTimes.get(userId)?.time );
     initialTime = userJoinTimes.get(userId)?.time || initialTime;
     const [time, setTime] = React.useState(Date.now() - initialTime);
 
