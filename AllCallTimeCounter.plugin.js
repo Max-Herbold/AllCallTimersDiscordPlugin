@@ -156,7 +156,9 @@ function TimerText({ text, className }) {
 }
 
 
-function useFixedTimer({ interval = 1000, initialTime = Date.now() }) {
+function useFixedTimer({ interval = 1000, initialTime = Date.now(), userId }) {
+    console.log(`useFixedTimer for user ${userId} with initial time ${initialTime}`, userJoinTimes.get(userId)?.time );
+    initialTime = userJoinTimes.get(userId)?.time || initialTime;
     const [time, setTime] = React.useState(Date.now() - initialTime);
 
     React.useEffect(() => {
@@ -192,7 +194,7 @@ function formatDurationMs(ms, human = false, seconds = true) {
 }
 
 function Timer(props) {
-    const durationMs = useFixedTimer({ initialTime: props.time });
+    const durationMs = useFixedTimer({ initialTime: props.time, userId: props.userId });
     const formatted = formatDurationMs(
         durationMs,
         settings.format === "human",
@@ -332,7 +334,7 @@ function subscribeToAllGuilds() {
     DiscordModules.dispatch({ type: "GUILD_SUBSCRIPTIONS_FLUSH", subscriptions });
 }
 
-function renderTimer(userId, channelId, guildId) {
+function renderTimer(userId) {
     // get the user join time from the users object
     const joinTime = userJoinTimes.get(userId);
     if (!joinTime?.time) {
@@ -343,5 +345,5 @@ function renderTimer(userId, channelId, guildId) {
         return;
     }
 
-    return React.createElement(Timer, { time: joinTime.time });
+    return React.createElement(Timer, { time: joinTime.time, userId });
 }
