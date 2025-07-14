@@ -7,17 +7,13 @@
  * @authorLink https://github.com/Max-Herbold
  * @version 1.1.0
  */
-
-const { Tooltip } = BdApi.Components;
-const { Webpack, React, Patcher, Utils, Data } = BdApi;
+const { Webpack, React, Patcher, Utils, Data, DOM, UI, Components } = BdApi;
 const DiscordModules = Webpack.getModule(m => m.dispatch && m.subscribe);
 
 const UserStore = Webpack.getStore("UserStore");
 const GuildStore = Webpack.getStore("GuildStore");
 
 const userJoinTimes = new Map();
-
-var console = {};
 
 const settings = {};
 const config = {
@@ -69,12 +65,10 @@ function setConfigSetting(id, newValue) {
 module.exports = class AllCallTimeCounter {
     constructor(meta) {
         this.meta = meta;
-        this.BdApi = new BdApi(this.meta.name);
-        console = this.BdApi.Logger;
     }
 
     getSettingsPanel() {
-        return this.BdApi.UI.buildSettingsPanel({
+        return UI.buildSettingsPanel({
             settings: config.settings,
             onChange: (category, id, value) => {
                 switch (id) {
@@ -92,7 +86,7 @@ module.exports = class AllCallTimeCounter {
 
     start() {
         initSettingsValues();
-        this.BdApi.DOM.addStyle(`[class^="draggable_"], [class^="voiceUser_"] { height: min-content !important; }
+        DOM.addStyle(this.meta.name, `[class^="draggable_"], [class^="voiceUser_"] { height: min-content !important; }
             div[class^='voiceUser_'] div[class^='chipletParent_'] { vertical-align: super; }
             div[class^='list_'][class*='collapsed_'] .timeCounter{display:none;}`)
         
@@ -118,7 +112,7 @@ module.exports = class AllCallTimeCounter {
         DiscordModules.unsubscribe("VOICE_STATE_UPDATES", VOICE_STATE_UPDATES);
         DiscordModules.unsubscribe("PASSIVE_UPDATE_V1", PASSIVE_UPDATE_V1);
         userJoinTimes.clear();
-        this.BdApi.DOM.removeStyle();
+        DOM.removeStyle(this.meta.name);
     }
 };
 
@@ -156,8 +150,7 @@ function TimerText({ text, className }) {
 }
 
 
-function useFixedTimer({ interval = 1000, initialTime = Date.now(), userId }) {
-    initialTime = userJoinTimes.get(userId)?.time || initialTime;
+function useFixedTimer({ interval = 1000, initialTime = Date.now() }) {
     const [time, setTime] = React.useState(Date.now() - initialTime);
 
     React.useEffect(() => {
@@ -193,7 +186,7 @@ function formatDurationMs(ms, human = false, seconds = true) {
 }
 
 function Timer(props) {
-    const durationMs = useFixedTimer({ initialTime: props.time, userId: props.userId });
+    const durationMs = useFixedTimer({ initialTime: props.time });
     const formatted = formatDurationMs(
         durationMs,
         settings.format === "human",
@@ -207,7 +200,7 @@ function Timer(props) {
         return React.createElement(TimerText, { text: formatted, className: defaultColorClassName });
     } else {
         return React.createElement(
-            Tooltip,
+            Components.Tooltip,
             { text: formatted },
             function ({ onMouseEnter, onMouseLeave }) {
                 return React.createElement(
@@ -344,5 +337,5 @@ function renderTimer(userId) {
         return;
     }
 
-    return React.createElement(Timer, { time: joinTime.time, userId });
+    return React.createElement(Timer, { time: joinTime.time });
 }
