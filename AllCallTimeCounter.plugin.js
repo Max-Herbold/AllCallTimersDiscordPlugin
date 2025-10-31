@@ -1,11 +1,11 @@
 /**
  * @name AllCallTimeCounter
- * @author Max, nicola02nb
+ * @author Max, nicola02nb, Witwitchy
  * @description Add call timer to all users in a server voice channel.
  * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl https://raw.githubusercontent.com/Max-Herbold/AllCallTimersDiscordPlugin/main/AllCallTimeCounter.plugin.js
  * @authorLink https://github.com/Max-Herbold
- * @version 1.1.1
+ * @version 1.1.2
  */
 const { Webpack, React, Patcher, Utils, Data, DOM, UI, Components } = BdApi;
 const DiscordModules = Webpack.getModule(m => m.dispatch && m.subscribe);
@@ -97,7 +97,7 @@ module.exports = class AllCallTimeCounter {
         }
         const VoiceUser = Webpack.getBySource("iconPriortySpeakerSpeaking", "avatarContainer", "getAvatarURL");
 
-        Patcher.after(this.meta.name, VoiceUser.ZP, "render", (thisObject, args, returnValue) => {
+        Patcher.after(this.meta.name, VoiceUser, "ZP", (thisObject, args, returnValue) => {
             if (settings.showWithoutHover){
                 const usernameDiv = Utils.findInTree(returnValue, (n) => n?.props?.className?.includes("username") && n?.props?.children, { walkable: ["props", "children"] });
                 usernameDiv.props.children.push(renderTimer(args[0].user.id));
