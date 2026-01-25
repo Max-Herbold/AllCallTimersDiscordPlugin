@@ -23,12 +23,7 @@ const config = {
         { type: "switch", id: "showRoleColor", name: "Show Role Color", note: "Show the user's role color (if this plugin in enabled)", value: true },
         { type: "switch", id: "trackSelf", name: "Track Self", note: "Also track yourself", value: true },
         { type: "switch", id: "showSeconds", name: "Show Seconds", note: "Show seconds in the timer", value: true },
-        {
-            type: "select", id: "format", name: "Format", note: "Compact or human readable format:", options: [
-                { label: "Human Readable (e.g. 1h 2m 3s)", value: "human" },
-                { label: "HH:mm:ss (e.g. 01:02:03)", value: true }
-            ], value: true
-        },
+        { type: "select", id: "format", name: "Format", note: "Compact or human readable format:", options: [{ label: "Human Readable (e.g. 1h 2m 3s)", value: "human" }, { label: "HH:mm:ss (e.g. 01:02:03)", value: true }], value: true },
         { type: "switch", id: "watchLargeGuilds", name: "Watch Large Guilds", note: "Track users in large guilds. This may cause lag if you're in a lot of large guilds with active voice users. Tested with up to 2000 active voice users with no issues.", value: false }
     ]
 };
@@ -101,7 +96,7 @@ module.exports = class AllCallTimeCounter {
 
         Patcher.after(this.meta.name, VoiceUser, "Ay", (thisObject, args, returnValue) => {
             if (settings.showWithoutHover) {
-                const usernameDiv = Utils.findInTree(returnValue, (n) => n?.props?.className?.includes("username"), { walkable: ["props", "children"] });
+                const usernameDiv = Utils.findInTree(returnValue, (n) => n?.props?.className?.includes("username") && n?.props?.children, { walkable: ["props", "children"] });
                 usernameDiv.props.children.push(renderTimer(args[0].user.id));
             } else {
                 returnValue.props.children.props.children.push(renderTimer(args[0].user.id));
