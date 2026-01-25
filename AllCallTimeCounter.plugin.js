@@ -5,11 +5,11 @@
  * @source https://github.com/Max-Herbold/AllCallTimersDiscordPlugin/blob/main/AllCallTimeCounter.plugin.js
  * @updateUrl https://raw.githubusercontent.com/Max-Herbold/AllCallTimersDiscordPlugin/main/AllCallTimeCounter.plugin.js
  * @authorLink https://github.com/Max-Herbold
- * @version 1.1.2
+ * @version 1.1.3
  */
 const { Webpack, React, Patcher, Utils, Data, DOM, UI, Components } = BdApi;
-const DiscordModules = Webpack.getModule(m => m.dispatch && m.subscribe);
 
+const Dispatcher = Webpack.getByKeys('dispatch', 'subscribe', 'unsubscribe', { searchExports: true });
 const UserStore = Webpack.getStore("UserStore");
 const GuildStore = Webpack.getStore("GuildStore");
 
@@ -23,10 +23,12 @@ const config = {
         { type: "switch", id: "showRoleColor", name: "Show Role Color", note: "Show the user's role color (if this plugin in enabled)", value: true },
         { type: "switch", id: "trackSelf", name: "Track Self", note: "Also track yourself", value: true },
         { type: "switch", id: "showSeconds", name: "Show Seconds", note: "Show seconds in the timer", value: true },
-        { type: "select", id: "format", name: "Format", note: "Compact or human readable format:", options: [
-            { label: "Human Readable (e.g. 1h 2m 3s)", value: "human" },
-            { label: "HH:mm:ss (e.g. 01:02:03)", value: true }
-        ], value: true },
+        {
+            type: "select", id: "format", name: "Format", note: "Compact or human readable format:", options: [
+                { label: "Human Readable (e.g. 1h 2m 3s)", value: "human" },
+                { label: "HH:mm:ss (e.g. 01:02:03)", value: true }
+            ], value: true
+        },
         { type: "switch", id: "watchLargeGuilds", name: "Watch Large Guilds", note: "Track users in large guilds. This may cause lag if you're in a lot of large guilds with active voice users. Tested with up to 2000 active voice users with no issues.", value: false }
     ]
 };
@@ -89,17 +91,17 @@ module.exports = class AllCallTimeCounter {
         DOM.addStyle(this.meta.name, `[class^="draggable_"], [class^="voiceUser_"] { height: min-content !important; }
             div[class^='voiceUser_'] div[class^='chipletParent_'] { vertical-align: super; }
             div[class^='list_'][class*='collapsed_'] .timeCounter{display:none;}`)
-        
-        DiscordModules.subscribe("VOICE_STATE_UPDATES", VOICE_STATE_UPDATES);
-        DiscordModules.subscribe("PASSIVE_UPDATE_V1", PASSIVE_UPDATE_V1);
+
+        Dispatcher.subscribe("VOICE_STATE_UPDATES", VOICE_STATE_UPDATES);
+        Dispatcher.subscribe("PASSIVE_UPDATE_V1", PASSIVE_UPDATE_V1);
         if (settings.watchLargeGuilds) {
             subscribeToAllGuilds();
         }
-        const VoiceUser = Webpack.getBySource("iconPriortySpeakerSpeaking", "avatarContainer", "getAvatarURL");
+        const VoiceUser = Webpack.getBySource("g4", "H", "getAvatarURL");
 
-        Patcher.after(this.meta.name, VoiceUser, "ZP", (thisObject, args, returnValue) => {
-            if (settings.showWithoutHover){
-                const usernameDiv = Utils.findInTree(returnValue, (n) => n?.props?.className?.includes("username") && n?.props?.children, { walkable: ["props", "children"] });
+        Patcher.after(this.meta.name, VoiceUser, "Ay", (thisObject, args, returnValue) => {
+            if (settings.showWithoutHover) {
+                const usernameDiv = Utils.findInTree(returnValue, (n) => n?.props?.className?.includes("username"), { walkable: ["props", "children"] });
                 usernameDiv.props.children.push(renderTimer(args[0].user.id));
             } else {
                 returnValue.props.children.props.children.push(renderTimer(args[0].user.id));
@@ -109,14 +111,12 @@ module.exports = class AllCallTimeCounter {
 
     stop() {
         Patcher.unpatchAll(this.meta.name);
-        DiscordModules.unsubscribe("VOICE_STATE_UPDATES", VOICE_STATE_UPDATES);
-        DiscordModules.unsubscribe("PASSIVE_UPDATE_V1", PASSIVE_UPDATE_V1);
+        Dispatcher.unsubscribe("VOICE_STATE_UPDATES", VOICE_STATE_UPDATES);
+        Dispatcher.unsubscribe("PASSIVE_UPDATE_V1", PASSIVE_UPDATE_V1);
         userJoinTimes.clear();
         DOM.removeStyle(this.meta.name);
     }
 };
-
-
 
 function TimerIcon(props) {
     const { height = 16, width = 16, className } = props || {};
@@ -192,7 +192,7 @@ function Timer(props) {
         settings.format === "human",
         settings.showSeconds
     );
-    
+
     const { username, usernameFont } = Webpack.getByKeys("username", "usernameFont");
     const defaultColorClassName = settings.showRoleColor ? "" : `${username} ${usernameFont}`;
 
@@ -323,7 +323,7 @@ function subscribeToAllGuilds() {
     // we need to subscribe to all guilds' events because otherwise we would miss updates on large guilds
     const guilds = Object.values(GuildStore.getGuilds()).map(guild => guild.id);
     const subscriptions = guilds.reduce((acc, id) => ({ ...acc, [id]: { typing: true } }), {});
-    DiscordModules.dispatch({ type: "GUILD_SUBSCRIPTIONS_FLUSH", subscriptions });
+    Dispatcher.dispatch({ type: "GUILD_SUBSCRIPTIONS_FLUSH", subscriptions });
 }
 
 function renderTimer(userId) {
